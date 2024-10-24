@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Shops, Products, Users } = require("../models");
 
 const createShop = async (req, res) => {
@@ -48,12 +49,24 @@ const createShop = async (req, res) => {
 
 const getAllShop = async (req, res) => {
   try {
+    //1. Menjaga request query agar tidak tersebar (menghindari sql injection)
+    //2. Dynamic filter
+    const { shopName, adminEmail, productName, stock } = req.query;
+    const shopCondition = {};
+
+    if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
+
+    const productCondition = {};
+    if (productName) productCondition.name = { [Op.iLike]: `%${productName}%` };
+    if (stock) productCondition.stock = stock;
+
     const shops = await Shops.findAll({
       include: [
         {
           model: Products,
           as: "products",
-          attributes: ["name", "images"],
+          attributes: ["name", "images", "stock", "price"],
+          where: productCondition,
         },
         {
           model: Users,
@@ -62,13 +75,17 @@ const getAllShop = async (req, res) => {
         },
       ],
       attributes: ["name", "adminEmail"],
+      where: shopCondition,
     });
-s
+
+    const totalData = shops.length;
+
     res.status(200).json({
       status: "Success",
       message: "Success get shops data",
       isSuccess: true,
       data: {
+        totalData,
         shops,
       },
     });
