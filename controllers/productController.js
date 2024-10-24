@@ -51,23 +51,41 @@ const createProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     //Dynamic filter
-    const { shopName } = req.query;
+    const { shopName, page } = req.query;
     const shopCondition = {};
 
     if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
 
+    //Pagination
+    const currentPage = page || 1;
+
+    const limit = 5;
+    const offset = (currentPage - 1) * limit;
+
+    //Find all product data with pagination
     const products = await Products.findAll({
       include: [
         {
           model: Shops,
           as: "shop",
-          attributes: ["name"],
+          attributes: ["id", "name", "userId"],
+          where: shopCondition,
+        },
+      ],
+      limit,
+      offset,
+    });
+
+    //Count total product data without pagination
+    const totalData = await Products.count({
+      include: [
+        {
+          model: Shops,
+          as: "shop",
           where: shopCondition,
         },
       ],
     });
-
-    const totalData = products.length;
 
     res.status(200).json({
       status: "Succeed",

@@ -1,25 +1,44 @@
-const { Users } = require("../models");
+const { Op } = require("sequelize");
+const { Users, Shops } = require("../models");
 
 const findUsers = async (req, res, next) => {
   try {
     //Dynamic filter
-    const { shopName } = req.query;
+    const { shopName, page } = req.query;
     const shopCondition = {};
 
     if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
 
+    //Pagination
+    const currentPage = page || 1;
+
+    const limit = 5;
+    const offset = (currentPage - 1) * limit;
+
+    //Find all user data with pagination
     const users = await Users.findAll({
       include: [
         {
           model: Shops,
-          as: "shop",
-          attributes: ["name"],
+          as: "shops",
+          attributes: ["id", "name"],
+          where: shopCondition,
+        },
+      ],
+      limit,
+      offset,
+    });
+
+    //Count total user data without pagination
+    const totalData = await Users.count({
+      include: [
+        {
+          model: Shops,
+          as: "shops",
           where: shopCondition,
         },
       ],
     });
-
-    const totalData = users.length;
 
     res.status(200).json({
       status: "Succeed",
