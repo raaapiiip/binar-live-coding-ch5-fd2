@@ -12,7 +12,7 @@ const createShop = async (req, res) => {
     });
 
     res.status(201).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success create new Shop",
       isSuccess: true,
       data: {
@@ -24,21 +24,21 @@ const createShop = async (req, res) => {
     if (error.name === "SequelizeValidationError") {
       const errorMessage = error.errors.map((err) => err.message);
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: errorMessage[0],
         isSuccess: false,
         data: null,
       });
     } else if (error.name === "SequelizeDatabaseError") {
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: error.message || "Database error",
         isSuccess: false,
         data: null,
       });
     } else {
       res.status(500).json({
-        status: "Fail",
+        status: "Failed",
         message: "An unexpected error occured",
         isSuccess: false,
         data: null,
@@ -64,7 +64,7 @@ const getAllShop = async (req, res) => {
       include: [
         {
           model: Products,
-          as: "products",
+          as: "product",
           attributes: ["name", "images", "stock", "price"],
           where: productCondition,
         },
@@ -81,7 +81,7 @@ const getAllShop = async (req, res) => {
     const totalData = shops.length;
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success get shops data",
       isSuccess: true,
       data: {
@@ -94,7 +94,7 @@ const getAllShop = async (req, res) => {
     if (error.name === "SequelizeValidationError") {
       const errorMessage = error.errors.map((err) => err.message);
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: errorMessage[0],
         isSuccess: false,
         data: null,
@@ -102,7 +102,7 @@ const getAllShop = async (req, res) => {
     }
 
     res.status(500).json({
-      status: "Fail",
+      status: "Failed",
       message: error.message,
       isSuccess: false,
       data: null,
@@ -121,7 +121,7 @@ const getShopById = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success get shop data",
       isSuccess: true,
       data: {
@@ -133,7 +133,7 @@ const getShopById = async (req, res) => {
     if (error.name === "SequelizeValidationError") {
       const errorMessage = error.errors.map((err) => err.message);
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: errorMessage[0],
         isSuccess: false,
         data: null,
@@ -141,7 +141,7 @@ const getShopById = async (req, res) => {
     }
 
     res.status(500).json({
-      status: "Fail",
+      status: "Failed",
       message: error.message,
       isSuccess: false,
       data: null,
@@ -162,7 +162,7 @@ const updateShop = async (req, res) => {
 
     if (!Shop) {
       res.status(404).json({
-        status: "Fail",
+        status: "Failed",
         message: "Data not found",
         isSuccess: false,
         data: null,
@@ -175,7 +175,7 @@ const updateShop = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success update shop",
       isSuccess: true,
       data: {
@@ -192,7 +192,7 @@ const updateShop = async (req, res) => {
     if (error.name === "SequelizeValidationError") {
       const errorMessage = error.errors.map((err) => err.message);
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: errorMessage[0],
         isSuccess: false,
         data: null,
@@ -200,7 +200,7 @@ const updateShop = async (req, res) => {
     }
 
     res.status(500).json({
-      status: "Fail",
+      status: "Failed",
       message: error.message,
       isSuccess: false,
       data: null,
@@ -220,7 +220,7 @@ const deleteShop = async (req, res) => {
 
     if (!Shop) {
       res.status(404).json({
-        status: "Fail",
+        status: "Failed",
         message: "Data not found",
         isSuccess: false,
         data: null,
@@ -230,7 +230,7 @@ const deleteShop = async (req, res) => {
     await Shops.destroy();
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success delete shop",
       isSuccess: true,
       data: null,
@@ -240,7 +240,7 @@ const deleteShop = async (req, res) => {
     if (error.name === "SequelizeValidationError") {
       const errorMessage = error.errors.map((err) => err.message);
       return res.status(400).json({
-        status: "Fail",
+        status: "Failed",
         message: errorMessage[0],
         isSuccess: false,
         data: null,
@@ -248,7 +248,7 @@ const deleteShop = async (req, res) => {
     }
 
     res.status(500).json({
-      status: "Fail",
+      status: "Failed",
       message: error.message,
       isSuccess: false,
       data: null,

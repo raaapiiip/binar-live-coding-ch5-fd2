@@ -2,15 +2,52 @@ const { Users } = require("../models");
 
 const findUsers = async (req, res, next) => {
   try {
-    const users = await Users.findAll();
+    //Dynamic filter
+    const { shopName } = req.query;
+    const shopCondition = {};
+
+    if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
+
+    const users = await Users.findAll({
+      include: [
+        {
+          model: Shops,
+          as: "shop",
+          attributes: ["name"],
+          where: shopCondition,
+        },
+      ],
+    });
+
+    const totalData = users.length;
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
+      message: "Success get users data",
       data: {
+        totalData,
         users,
       },
     });
-  } catch (err) {}
+  } catch (error) {
+    console.log(error.name);
+    if (error.name === "SequelizeValidationError") {
+      const errorMessage = error.errors.map((err) => err.message);
+      return res.status(400).json({
+        status: "Failed",
+        message: errorMessage[0],
+        isSuccess: false,
+        data: null,
+      });
+    }
+
+    res.status(500).json({
+      status: "Failed",
+      message: error.message,
+      isSuccess: false,
+      data: null,
+    });
+  }
 };
 
 const findUserById = async (req, res, next) => {
@@ -22,12 +59,31 @@ const findUserById = async (req, res, next) => {
     });
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
+      message: "Success get user data",
       data: {
         user,
       },
     });
-  } catch (err) {}
+  } catch (error) {
+    console.log(error.name);
+    if (error.name === "SequelizeValidationError") {
+      const errorMessage = error.errors.map((err) => err.message);
+      return res.status(400).json({
+        status: "Failed",
+        message: errorMessage[0],
+        isSuccess: false,
+        data: null,
+      });
+    }
+
+    res.status(500).json({
+      status: "Failed",
+      message: error.message,
+      isSuccess: false,
+      data: null,
+    });
+  }
 };
 
 const updateUser = async (req, res, next) => {
@@ -49,10 +105,28 @@ const updateUser = async (req, res, next) => {
     );
 
     res.status(200).json({
-      status: "Success",
-      message: "sukses update user",
+      status: "Succeed",
+      message: "Success update user",
     });
-  } catch (err) {}
+  } catch (error) {
+    console.log(error.name);
+    if (error.name === "SequelizeValidationError") {
+      const errorMessage = error.errors.map((err) => err.message);
+      return res.status(400).json({
+        status: "Failed",
+        message: errorMessage[0],
+        isSuccess: false,
+        data: null,
+      });
+    }
+
+    res.status(500).json({
+      status: "Failed",
+      message: error.message,
+      isSuccess: false,
+      data: null,
+    });
+  }
 };
 
 const deleteUser = async (req, res, next) => {
@@ -63,6 +137,15 @@ const deleteUser = async (req, res, next) => {
       },
     });
 
+    if (!user) {
+      res.status(404).json({
+        status: "Failed",
+        message: "Data not found",
+        isSuccess: false,
+        data: null,
+      });
+    }
+
     await Users.destroy({
       where: {
         id: req.params.id,
@@ -70,10 +153,28 @@ const deleteUser = async (req, res, next) => {
     });
 
     res.status(200).json({
-      status: "Success",
-      message: "sukses delete user",
+      status: "Succeed",
+      message: "Success delete user",
     });
-  } catch (err) {}
+  } catch (error) {
+    console.log(error.name);
+    if (error.name === "SequelizeValidationError") {
+      const errorMessage = error.errors.map((err) => err.message);
+      return res.status(400).json({
+        status: "Failed",
+        message: errorMessage[0],
+        isSuccess: false,
+        data: null,
+      });
+    }
+
+    res.status(500).json({
+      status: "Failed",
+      message: error.message,
+      isSuccess: false,
+      data: null,
+    });
+  }
 };
 
 module.exports = {

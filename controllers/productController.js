@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Products, Shops } = require("../models");
 
 const createProduct = async (req, res) => {
@@ -12,7 +13,7 @@ const createProduct = async (req, res) => {
     });
 
     res.status(201).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success create new product",
       isSuccess: true,
       data: {
@@ -49,20 +50,31 @@ const createProduct = async (req, res) => {
 
 const getAllProduct = async (req, res) => {
   try {
+    //Dynamic filter
+    const { shopName } = req.query;
+    const shopCondition = {};
+
+    if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
+
     const products = await Products.findAll({
       include: [
         {
           model: Shops,
           as: "shop",
+          attributes: ["name"],
+          where: shopCondition,
         },
       ],
     });
 
+    const totalData = products.length;
+
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success get products data",
       isSuccess: true,
       data: {
+        totalData,
         products,
       },
     });
@@ -104,7 +116,7 @@ const getProductById = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success get product data",
       isSuccess: true,
       data: {
@@ -159,7 +171,7 @@ const updateProduct = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success update product",
       isSuccess: true,
       data: {
@@ -214,7 +226,7 @@ const deleteProduct = async (req, res) => {
     await Products.destroy();
 
     res.status(200).json({
-      status: "Success",
+      status: "Succeed",
       message: "Success delete product",
       isSuccess: true,
       data: null,
