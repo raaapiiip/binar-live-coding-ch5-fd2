@@ -1,13 +1,13 @@
 const { Shops, Products, Users } = require("../models");
 
 const createShop = async (req, res) => {
-  const { name, adminEmail } = req.body;
+  const { name, adminEmail, userId } = req.body;
 
   try {
     const newShop = await Shops.create({
       name,
       adminEmail,
-      userId: 1,
+      userId,
     });
 
     res.status(201).json({
@@ -28,14 +28,21 @@ const createShop = async (req, res) => {
         isSuccess: false,
         data: null,
       });
+    } else if (error.name === "SequelizeDatabaseError") {
+      return res.status(400).json({
+        status: "Fail",
+        message: error.message || "Database error",
+        isSuccess: false,
+        data: null,
+      });
+    } else {
+      res.status(500).json({
+        status: "Fail",
+        message: "An unexpected error occured",
+        isSuccess: false,
+        data: null,
+      });
     }
-
-    res.status(500).json({
-      status: "Fail",
-      message: error.message,
-      isSuccess: false,
-      data: null,
-    });
   }
 };
 
@@ -46,14 +53,17 @@ const getAllShop = async (req, res) => {
         {
           model: Products,
           as: "products",
+          attributes: ["name", "images"],
         },
         {
           model: Users,
           as: "user",
+          attributes: ["name"],
         },
       ],
+      attributes: ["name", "adminEmail"],
     });
-
+s
     res.status(200).json({
       status: "Success",
       message: "Success get shops data",

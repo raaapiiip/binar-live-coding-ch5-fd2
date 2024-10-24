@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const authController = require("../controllers/authController");
+const { authController } = require("../controllers");
 
 // router.post("", shopController.createShop);
 // router.get("", shopController.getAllShop);
