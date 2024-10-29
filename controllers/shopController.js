@@ -51,22 +51,22 @@ const getAllShop = async (req, res) => {
   try {
     //1. Menjaga request query agar tidak tersebar (menghindari sql injection)
     //2. Dynamic filter
-    const { shopName, productName, stock, page } = req.query;
-    const shopCondition = {};
+    const { shopName, productName, userName, stock, size, page } = req.query;
 
+    const shopCondition = {};
     if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
 
     const productCondition = {};
     if (productName) productCondition.name = { [Op.iLike]: `%${productName}%` };
     if (stock) productCondition.stock = stock;
 
-    //Pagination
-    const currentPage = page || 1;
+    const userCondition = {};
+    if (userName) userCondition.name = { [Op.iLike]: `%${userName}%` };
 
-    const limit = 5;
-    const offset = (currentPage - 1) * limit;
+    const pageSize = parseInt(size) || 10;
+    const pageNum = parseInt(page) || 1;
+    const offset = (pageNum - 1) * pageSize;
 
-    //Find all product data with pagination
     const shops = await Shops.findAll({
       include: [
         {
@@ -83,11 +83,10 @@ const getAllShop = async (req, res) => {
       ],
       attributes: ["id", "name", "adminEmail"],
       where: shopCondition,
-      limit,
-      offset
+      limit: pageSize,
+      offset,
     });
-
-    //Count total product data without pagination
+    
     const totalData = await Shops.count({
       include: [
         {
@@ -98,8 +97,10 @@ const getAllShop = async (req, res) => {
         {
           model: Users,
           as: "user",
+          where: userCondition,
         },
       ],
+      where: shopCondition,
     });
 
     res.status(200).json({
@@ -108,6 +109,8 @@ const getAllShop = async (req, res) => {
       isSuccess: true,
       data: {
         totalData,
+        currentPage: pageNum,
+        pageSize,
         shops,
       },
     });

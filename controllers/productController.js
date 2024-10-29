@@ -51,32 +51,33 @@ const createProduct = async (req, res) => {
 const getAllProduct = async (req, res) => {
   try {
     //Dynamic filter
-    const { shopName, page } = req.query;
-    const shopCondition = {};
+    const { shopName, productName, stock, size, page } = req.query;
 
+    const shopCondition = {};
     if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
 
-    //Pagination
-    const currentPage = page || 1;
+    const productCondition = {};
+    if (productName) productCondition.name = { [Op.iLike]: `%${productName}%` };
+    if (stock) productCondition.stock = stock;
 
-    const limit = 5;
-    const offset = (currentPage - 1) * limit;
+    const pageSize = parseInt(size) || 10;
+    const pageNum = parseInt(page) || 1;
+    const offset = (pageNum - 1) * pageSize;
 
-    //Find all product data with pagination
     const products = await Products.findAll({
       include: [
         {
           model: Shops,
           as: "shop",
-          attributes: ["id", "name", "userId"],
+          attributes: ["name"],
           where: shopCondition,
         },
       ],
-      limit,
+      where: productCondition,
+      limit: pageSize,
       offset,
     });
 
-    //Count total product data without pagination
     const totalData = await Products.count({
       include: [
         {
@@ -85,6 +86,7 @@ const getAllProduct = async (req, res) => {
           where: shopCondition,
         },
       ],
+      where: productCondition,
     });
 
     res.status(200).json({
@@ -93,6 +95,8 @@ const getAllProduct = async (req, res) => {
       isSuccess: true,
       data: {
         totalData,
+        currentPage: pageNum,
+        pageSize,
         products,
       },
     });

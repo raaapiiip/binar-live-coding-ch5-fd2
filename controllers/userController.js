@@ -4,32 +4,33 @@ const { Users, Shops } = require("../models");
 const findUsers = async (req, res, next) => {
   try {
     //Dynamic filter
-    const { shopName, page } = req.query;
-    const shopCondition = {};
+    const { shopName, userName, role, size, page } = req.query;
 
+    const shopCondition = {};
     if (shopName) shopCondition.name = { [Op.iLike]: `%${shopName}%` };
 
-    //Pagination
-    const currentPage = page || 1;
+    const userCondition = {};
+    if (userName) userCondition.name = { [Op.iLike]: `%${userName}%` };
+    if (role) userCondition.role = role;
 
-    const limit = 5;
-    const offset = (currentPage - 1) * limit;
+    const pageSize = parseInt(size) || 10;
+    const pageNum = parseInt(page) || 1;
+    const offset = (pageNum - 1) * pageSize;
 
-    //Find all user data with pagination
     const users = await Users.findAll({
       include: [
         {
           model: Shops,
           as: "shops",
-          attributes: ["id", "name"],
+          attributes: ["name"],
           where: shopCondition,
         },
       ],
-      limit,
+      where: userCondition,
+      limit: pageSize,
       offset,
     });
 
-    //Count total user data without pagination
     const totalData = await Users.count({
       include: [
         {
@@ -38,6 +39,7 @@ const findUsers = async (req, res, next) => {
           where: shopCondition,
         },
       ],
+      where: userCondition,
     });
 
     res.status(200).json({
@@ -45,6 +47,8 @@ const findUsers = async (req, res, next) => {
       message: "Success get users data",
       data: {
         totalData,
+        currentPage: pageNum,
+        pageSize,
         users,
       },
     });

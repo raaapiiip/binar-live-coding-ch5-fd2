@@ -1,0 +1,395 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Shops API",
+    "description": "API for managing shops"
+  },
+  "paths": {
+    "/shops": {
+      "get": {
+        "summary": "Get list of shops with products and user details",
+        "description": "Fetches a paginated list of shops, each with its products and the associated user details.",
+        "operationId": "readShop",
+        "tags": ["Shops"],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Succeed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success get shops data"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalData": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "currentPage": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "shops": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 6
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Green - Satterfield"
+                              },
+                              "adminEmail": {
+                                "type": "string",
+                                "nullable": true,
+                                "example": null
+                              },
+                              "products": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "integer",
+                                      "example": 6
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "example": "Luxurious Metal Bacon"
+                                    },
+                                    "images": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "format": "uri",
+                                        "example": "https://ik.imagekit.io/imamth/Profile-17-1729202156932_ieaMdNeZB.png?updatedAt=1729202158471"
+                                      }
+                                    },
+                                    "stock": {
+                                      "type": "integer",
+                                      "example": 14
+                                    },
+                                    "price": {
+                                      "type": "integer",
+                                      "example": 19860
+                                    }
+                                  }
+                                }
+                              },
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "example": 6
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "example": "Hilda Yundt"
+                                  },
+                                  "age": {
+                                    "type": "integer",
+                                    "example": 20
+                                  },
+                                  "role": {
+                                    "type": "string",
+                                    "example": "admin"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request parameters"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new shop",
+        "description": "Creates a new shop and stores it in the database.",
+        "operationId": "createShop",
+        "tags": ["Shops"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Green - Satterfield",
+                    "description": "Name of the shop"
+                  },
+                  "adminEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "admin@example.com",
+                    "description": "Email of the shop admin"
+                  },
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "Luxurious Metal Bacon"
+                        },
+                        "images": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "https://example.com/image.jpg"
+                          }
+                        },
+                        "stock": {
+                          "type": "integer",
+                          "example": 14
+                        },
+                        "price": {
+                          "type": "integer",
+                          "example": 19860
+                        }
+                      },
+                      "required": ["name", "stock", "price"]
+                    },
+                    "description": "List of products for the shop"
+                  },
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "example": 6
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Hilda Yundt"
+                      },
+                      "age": {
+                        "type": "integer",
+                        "example": 20
+                      },
+                      "role": {
+                        "type": "string",
+                        "example": "admin"
+                      }
+                    },
+                    "description": "User data for the shop admin",
+                    "required": ["name", "role"]
+                  }
+                },
+                "required": ["name", "products", "user"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Shop created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Succeed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Shop created successfully"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 6
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Green - Satterfield"
+                        },
+                        "adminEmail": {
+                          "type": "string",
+                          "example": "admin@example.com"
+                        },
+                        "products": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "example": 6
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Luxurious Metal Bacon"
+                              },
+                              "images": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "example": "https://example.com/image.jpg"
+                                }
+                              },
+                              "stock": {
+                                "type": "integer",
+                                "example": 14
+                              },
+                              "price": {
+                                "type": "integer",
+                                "example": 19860
+                              }
+                            }
+                          }
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 6
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Hilda Yundt"
+                            },
+                            "age": {
+                              "type": "integer",
+                              "example": 20
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "admin"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    },
+                    "isSuccess": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
