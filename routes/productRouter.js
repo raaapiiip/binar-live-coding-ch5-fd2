@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const { productController } = require("../controllers");
+const authenticate = require("../middlewares/authenticate");
 
 router.post("", productController.createProduct);
 router.get("", productController.getAllProduct);
