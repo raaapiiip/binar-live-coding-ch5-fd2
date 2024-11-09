@@ -19,8 +19,7 @@ module.exports = async (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const user = await Users.findByPk(payload.userId);
 
-    req.user = user, 
-    next();
+    (req.user = user), next();
   } catch (err) {
     return res.status(500).json({
       status: "Failed",

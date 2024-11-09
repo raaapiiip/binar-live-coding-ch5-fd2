@@ -86,7 +86,7 @@ const getAllShop = async (req, res) => {
       limit: pageSize,
       offset,
     });
-    
+
     const totalData = await Shops.count({
       include: [
         {

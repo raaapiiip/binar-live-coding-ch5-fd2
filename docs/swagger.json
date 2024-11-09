@@ -6,7 +6,7 @@
     "description": "API for managing shops"
   },
   "paths": {
-    "/shops": {
+    "/api/v1/shops": {
       "get": {
         "summary": "Get list of shops with products and user details",
         "description": "Fetches a paginated list of shops, each with its products and the associated user details.",
