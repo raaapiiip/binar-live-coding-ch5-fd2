@@ -15,10 +15,10 @@ module.exports = async (req, res, next) => {
     }
 
     const token = bearerToken.split("Bearer ")[1];
-
+    
     const payload = jwt.verify(token, process.env.JWT_SECRET);
+    
     const user = await Users.findByPk(payload.userId);
-
     (req.user = user), next();
   } catch (err) {
     return res.status(500).json({

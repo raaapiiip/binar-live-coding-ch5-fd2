@@ -1,5 +1,4 @@
 const router = require("express").Router();
-
 const Product = require("./productRouter");
 const Shop = require("./shopRouter");
 const Auth = require("./authRouter");

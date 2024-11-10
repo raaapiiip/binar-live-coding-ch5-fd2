@@ -3,7 +3,6 @@ const { Users, Shops } = require("../models");
 
 const findUsers = async (req, res, next) => {
   try {
-    //Dynamic filter
     const { shopName, userName, role, size, page } = req.query;
 
     const shopCondition = {};

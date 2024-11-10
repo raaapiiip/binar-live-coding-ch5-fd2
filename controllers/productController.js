@@ -50,7 +50,6 @@ const createProduct = async (req, res) => {
 
 const getAllProduct = async (req, res) => {
   try {
-    //Dynamic filter
     const { shopName, productName, stock, size, page } = req.query;
 
     const shopCondition = {};

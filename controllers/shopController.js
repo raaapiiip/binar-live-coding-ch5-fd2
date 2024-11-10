@@ -49,8 +49,6 @@ const createShop = async (req, res) => {
 
 const getAllShop = async (req, res) => {
   try {
-    //1. Menjaga request query agar tidak tersebar (menghindari sql injection)
-    //2. Dynamic filter
     const { shopName, productName, userName, stock, size, page } = req.query;
 
     const shopCondition = {};
